@@ -9,11 +9,36 @@ use Illuminate\Http\Request;
 class ContactController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $contacts = Contact::with('group')->latest()->paginate(10);
+        // Ambil parameter sort, default ke 'newest'
+        $sort = $request->get('sort', 'newest');
+
+        // Base query dengan relasi group
+        $query = Contact::with('group');
+
+        // Apply sorting
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'az':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'za':
+                $query->orderBy('name', 'desc');
+                break;
+            default: // newest
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+        // Paginate dengan membawa query string agar sort tetap terjaga
+        $contacts = $query->paginate(10)->withQueryString();
+
         return view('contacts.index', compact('contacts'));
     }
+
 
 
     public function create()

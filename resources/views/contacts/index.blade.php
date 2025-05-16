@@ -4,6 +4,20 @@
 @section('subtitle', 'Manage your contacts efficiently')
 
 @section('content')
+    <!-- Sort & Filter Controls -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
+        <form method="GET" action="{{ route('contacts.index') }}" class="flex items-center space-x-2">
+            <label for="sort" class="text-sm font-medium text-gray-700">Sort:</label>
+            <select name="sort" id="sort" class="border-gray-200 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
+                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                <option value="az" {{ request('sort') == 'az' ? 'selected' : '' }}>A–Z</option>
+                <option value="za" {{ request('sort') == 'za' ? 'selected' : '' }}>Z–A</option>
+            </select>
+            <button type="submit" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-all text-sm">Apply</button>
+        </form>
+    </div>
+
     <div class="overflow-x-auto rounded-lg border border-gray-100">
         <table class="min-w-max w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -60,7 +74,7 @@
 
     <!-- Pagination -->
     <div class="mt-4 sm:mt-6">
-        {{ $contacts->links() }}
+        {{ $contacts->withQueryString()->links() }}
     </div>
 
     <!-- Delete Confirmation Modal -->
